@@ -1,0 +1,21 @@
+<ion-header>
+    <ion-navbar>
+        <button ion-button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>Météo actuelle</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <span *ngIf="!show" style="color: red">En cours de chargement ...</span>
+    <div *ngIf="show" class="block-meteo">
+    Les météos actuelles sont : <br>
+        <div *ngFor="let w of meteo.weather">
+            {{ w.description }}
+            {{ w.icon }}
+            {{ w.id }}
+            {{ w.main }}
+        </div>
+    </div>
+</ion-content>
