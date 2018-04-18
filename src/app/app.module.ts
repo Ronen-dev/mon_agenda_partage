@@ -11,6 +11,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { MeteoPage } from '../pages/meteo/meteo';
 import { MeteoService } from '../services/meteo.service';
 import { HttpModule } from '@angular/http';
+import { Geolocation } from '@ionic-native/geolocation';
 
 @NgModule({
     declarations: [
@@ -35,7 +36,8 @@ import { HttpModule } from '@angular/http';
         StatusBar,
         SplashScreen,
         {provide: ErrorHandler, useClass: IonicErrorHandler},
-        MeteoService
+        MeteoService,
+        Geolocation
     ]
 })
 export class AppModule {}

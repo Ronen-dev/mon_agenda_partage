@@ -12,7 +12,7 @@ export class MeteoService {
         private http: Http
     ) { }
 
-    getMeteo(lat: string, lon: string): Promise<Meteo> {
+    getMeteo(lat: number, lon: number): Promise<Meteo> {
         return this.http.get(this.url + '&lat=' + lat + '&lon=' + lon)
             .toPromise()
             .then(response => response.json() as Meteo);
