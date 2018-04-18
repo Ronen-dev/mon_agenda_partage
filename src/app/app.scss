@@ -1,5 +1,5 @@
 // http://ionicframework.com/docs/theming/
-
+@import "../theme/variables";
 
 // App Global Sass
 // --------------------------------------------------
@@ -14,3 +14,26 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
+@font-face {
+    font-family: 'Pacifico';
+    font-style: normal;
+    font-weight: 200;
+    src: local('Pacifico'), local('Pacifico-Regular'), url("../assets/fonts/Pacifico/Pacifico-Regular.ttf") format('woff2');
+}
+
+@font-face {
+    font-family: 'Oswald-Light';
+    font-style: normal;
+    font-weight: 300;
+    src: local('Pacifico'), local('Oswald-Light'), url("../assets/fonts/Oswald/Oswald-Light.ttf") format('woff2');
+}
+
+* {
+    font-family: $font-family-base;
+}
+
+.toolbar-md,
+.toolbar-ios {
+    padding: 0;
+}
