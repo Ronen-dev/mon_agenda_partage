@@ -3,19 +3,42 @@
         <button ion-button menuToggle>
             <ion-icon name="menu"></ion-icon>
         </button>
-        <ion-title>Météo actuelle</ion-title>
+        <ion-title>Météo</ion-title>
     </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-    <span *ngIf="!show" style="color: red">En cours de chargement ...</span>
-    <div *ngIf="show" class="block-meteo">
-    Les météos actuelles sont : <br>
-        <div *ngFor="let w of meteo.weather">
-            {{ w.description }}
-            {{ w.icon }}
-            {{ w.id }}
-            {{ w.main }}
-        </div>
-    </div>
+    <!--<span *ngIf="!show" style="color: red">En cours de chargement ...</span>-->
+    <ion-card>
+
+        <!--<img src="assets/img/bjork-live.jpg"/>-->
+        <!--Météo-->
+        <ion-card-content>
+            <ion-card-title text-center>
+                Météo actuelle
+            </ion-card-title>
+            <p>
+                Les données météos sur votre localisation (pays: <b>{{ show && meteo.sys.country ? meteo.sys.country : '-' }}</b>) sont :
+            </p>
+        </ion-card-content>
+
+        <ion-item>
+            <ion-icon ios="ios-sunny" md="md-sunny" isActive="true" item-start style="color: #d09c15"></ion-icon>
+            Températures
+            <ion-badge item-end>{{ show && meteo.main.temp ? ((meteo.main.temp - kelvinDiff) | number: '1.0-0') : '-' }} °C</ion-badge>
+        </ion-item>
+
+        <ion-item>
+            <ion-icon ios="ios-cloud" md="md-cloud" isActive="true" item-start style="color: #a1dbd4"></ion-icon>
+            Nuages
+            <ion-badge item-end>{{ show && meteo.weather[0] ? meteo.weather[0].description.charAt(0).toUpperCase() + meteo.weather[0].description.slice(1).toLowerCase() : '-' }}</ion-badge>
+        </ion-item>
+
+        <ion-item>
+            <ion-icon ios="ios-navigate" md="md-navigate" isActive="true" item-start style="color: #989b9a"></ion-icon>
+            Vent
+            <ion-badge item-end>{{ show && meteo.wind.speed ? (meteo.wind.speed | number: '1.0-0') : '-' }} km/h</ion-badge>
+        </ion-item>
+
+    </ion-card>
 </ion-content>
