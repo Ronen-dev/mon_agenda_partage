@@ -12,6 +12,7 @@ import { MeteoPage } from '../pages/meteo/meteo';
 import { MeteoService } from '../services/meteo.service';
 import { HttpModule } from '@angular/http';
 import { Geolocation } from '@ionic-native/geolocation';
+import { NgCalendarModule } from 'ionic2-calendar';
 
 @NgModule({
     declarations: [
@@ -23,7 +24,8 @@ import { Geolocation } from '@ionic-native/geolocation';
     imports: [
         BrowserModule,
         HttpModule,
-        IonicModule.forRoot(MyApp),
+        NgCalendarModule,
+        IonicModule.forRoot(MyApp)
     ],
     bootstrap: [IonicApp],
     entryComponents: [

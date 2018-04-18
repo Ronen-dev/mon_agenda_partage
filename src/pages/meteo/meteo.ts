@@ -23,7 +23,7 @@ export class MeteoPage implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.loading = this.loadingCtrl.create({ content: 'Récupération des données ...' });
+        this.loading = this.loadingCtrl.create({ content: 'Récupération des données ...', duration: 10000 });
         this.loading.present();
         this.geolocation.getCurrentPosition().then(res => {
             this.meteoService.getMeteo(res.coords.latitude, res.coords.longitude).then(meteo => {
