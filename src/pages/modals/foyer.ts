@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { ViewController } from "ionic-angular";
+import { NavParams, ViewController } from "ionic-angular";
 import { Foyer } from "../../shared/models/foyer";
 import { FoyerService } from "../../services/foyer.service";
 import { Storage } from "@ionic/storage";
@@ -9,7 +9,7 @@ import { Storage } from "@ionic/storage";
     template: `
         <ion-header>
             <ion-navbar>
-                <ion-title>Ajouter un foyer</ion-title>
+                <ion-title>{{ show && mode === 'add' ? 'Ajouter un foyer' : 'Modifier le foyer' }}</ion-title>
                 <ion-buttons end>
                     <button ion-button icon-only (click)="dismiss()">
                         <ion-icon item-right name="ios-close-outline"></ion-icon>
@@ -24,7 +24,7 @@ import { Storage } from "@ionic/storage";
                     <ion-input type="text" [(ngModel)]="foyer.name" name="name"></ion-input>
                 </ion-item>
                 <div text-center margin-top="15px">
-                    <button ion-button type="submit">Ajouter le foyer</button>
+                    <button ion-button type="submit">{{ show && mode === 'add' ? 'Ajouter' : 'Modifier' }}</button>
                 </div>
             </form>
         </ion-content>
@@ -32,26 +32,47 @@ import { Storage } from "@ionic/storage";
 })
 export class FoyerModal {
 
+    mode: string;
     foyer: Foyer;
+    show: boolean = false;
 
     constructor(
         public viewCtrl: ViewController,
         private foyerService: FoyerService,
-        private storage: Storage
+        private storage: Storage,
+        private params: NavParams,
     ) {
         this.foyer = { } as Foyer;
-        this.storage.get('currentUser').then(user => {
-            delete user.password;
-            this.foyer.createdBy = user;
-            this.foyer.users = [user];
-        });
+        this.mode  = params.get('mode');
+        this.init();
+    }
+
+    init() {
+        if (this.mode === 'add') {
+            this.storage.get('currentUser').then(user => {
+                delete user.password;
+                this.foyer.createdBy = user;
+                this.foyer.users = [user];
+                this.show = true;
+            });
+        } else {
+            this.foyer = this.params.get('foyer');
+            this.show  = true;
+        }
     }
 
     submit() {
-        let foyerList = this.foyerService.fireList();
-        foyerList.push(this.foyer).then(res => {
-            this.dismiss(true);
-        })
+        if (this.mode === 'add') {
+            let foyerList = this.foyerService.fireList();
+            foyerList.push(this.foyer).then(res => {
+                this.dismiss(true);
+            })
+        } else {
+            let fireFoyers = this.foyerService.fireList();
+            fireFoyers.update(this.foyer.key, { name: this.foyer.name }).then(res => {
+                this.dismiss(true);
+            });
+        }
     }
 
     dismiss(isValid: boolean) {

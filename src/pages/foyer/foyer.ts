@@ -58,7 +58,7 @@ export class FoyerPage {
 
 	createFoyer() {
 	    this.show = false;
-        let foyerModal = this.modalCtrl.create(FoyerModal);
+        let foyerModal = this.modalCtrl.create(FoyerModal, { mode: 'add' });
         foyerModal.onDidDismiss(data => {
             this.init();
         });

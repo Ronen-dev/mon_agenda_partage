@@ -12,6 +12,7 @@ import { FoyerService } from "../../services/foyer.service";
 import { Storage } from "@ionic/storage";
 import { User } from "../../shared/models/user";
 import { UserModal } from "../modals/user";
+import { FoyerModal } from "../modals/foyer";
 
 @Component({
 	selector: 'page-user',
@@ -69,7 +70,14 @@ export class UserPage {
         userModal.present();
     }
 
-    editFoyer() {}
+    editFoyer() {
+        this.show = false;
+        let foyerModal = this.modalCtrl.create(FoyerModal, { mode: 'edit', foyer: this.currentFoyer });
+        foyerModal.onDidDismiss(data => {
+            this.init();
+        });
+        foyerModal.present();
+    }
 
     // detail(user: User) { }
 }
