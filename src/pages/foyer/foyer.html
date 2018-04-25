@@ -1,19 +1,23 @@
 <ion-header>
-	<ion-navbar>
+	<ion-navbar color="agenda">
 		<button ion-button menuToggle>
 			<ion-icon name="menu"></ion-icon>
 		</button>
-		<ion-title text-center>Vos Foyers</ion-title>
-		<button ion-button icon-only (click)="createNewFoyer()">
-			<ion-icon name="add-circle"></ion-icon>
-		</button>
+		<ion-title>Vos foyers</ion-title>
+		<!--<button ion-button icon-only (click)="createNewFoyer()">-->
+			<!--<ion-icon name="add-circle"></ion-icon>-->
+		<!--</button>-->
 	</ion-navbar>
 </ion-header>
 
 <ion-content padding>
-	<!--<ul>
-		<li *ngFor="let foyer of (foyers | async)">
-			{{ foyer.name }}
-		</li>
-	</ul>-->
+    <span text-center *ngIf="show && foyers.length === 0">Aucun foyer, ajouter votre premier en cliquant sur "+".</span>
+    <div *ngIf="show && foyers.length > 0">
+        <ion-card padding="10px" text-center *ngFor="let foyer of foyers">
+            {{ foyer.name }}
+        </ion-card>
+    </div>
+    <ion-fab right bottom>
+        <button ion-fab color="primary" (click)="createFoyer()"><ion-icon name="add"></ion-icon></button>
+    </ion-fab>
 </ion-content>

@@ -4,6 +4,7 @@ import { User } from '../../shared/models/user';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { HomePage } from "../home/home";
 import { Storage } from "@ionic/storage";
+import { UserService } from "../../services/user.service";
 
 @Component({
     selector: 'page-login',
@@ -19,14 +20,10 @@ export class LoginPage {
         public navParams: NavParams,
         private afAuth: AngularFireAuth,
         private alertCtrl: AlertController,
-        private storage: Storage
+        private storage: Storage,
+        private userService: UserService
     ) {
         this.user = {} as User;
-        this.storage.get('currentUser').then(user => {
-            if (user) {
-                this.navCtrl.setRoot(HomePage);
-            }
-        });
     }
 
     ionViewDidLoad() { }
@@ -57,12 +54,20 @@ export class LoginPage {
     register(user: User) {
         if (Object.keys(user).length !== 0 && user.constructor === Object) {
             this.afAuth.auth.createUserWithEmailAndPassword(user.email, user.password).then(result => {
-                this.storage.set('currentUser', user);
-                this.navCtrl.setRoot(HomePage);
+                let userList = this.userService.fireList();
+                delete user.password;
+                userList.push(user).then(res => {
+                    this.storage.set('currentUser', user);
+                    this.navCtrl.setRoot(HomePage);
+                });
             }).catch(err => {
+                let subtitle = 'Une erreur est survenue lors de l\'inscription.';
+                if (err.code === 'auth/email-already-in-use') {
+                    subtitle = 'L\'e-mail renseigné existe déjà.';
+                }
                 let alert = this.alertCtrl.create({
                     title: 'Erreur',
-                    subTitle: 'Une erreur est survenue lors de l\'inscription.',
+                    subTitle: subtitle,
                     buttons: ['D\'accord']
                 });
                 alert.present();

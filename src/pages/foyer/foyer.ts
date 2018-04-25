@@ -1,8 +1,16 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController } from 'ionic-angular';
-import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFireDatabase } from 'angularfire2/database';
-import { Observable } from 'rxjs/Observable';
+import {
+    NavController,
+    NavParams,
+    AlertController,
+    ModalController,
+    LoadingController,
+    Loading
+} from 'ionic-angular';
+import { Foyer } from "../../shared/models/foyer";
+import { FoyerService } from "../../services/foyer.service";
+import { FoyerModal } from "../modals/foyer";
+import { Storage } from "@ionic/storage";
 
 @Component({
 	selector: 'page-foyer',
@@ -10,57 +18,44 @@ import { Observable } from 'rxjs/Observable';
 })
 export class FoyerPage {
 
-	foyers: Observable<any[]> = null;
+	foyers: Foyer[];
+	show: boolean = false;
+    loading: Loading;
 
 	constructor(
-		private afAuth: AngularFireAuth,
-		private db: AngularFireDatabase,
+		private foyerService: FoyerService,
 		public navCtrl: NavController,
 		public navParams: NavParams,
-		public alertCtrl: AlertController) {
+		public alertCtrl: AlertController,
+        public modalCtrl: ModalController,
+        public loadingCtrl: LoadingController,
+        private storage: Storage
+    ) { }
+
+	ionViewDidLoad() {
+    	this.init();
 	}
 
-	// ionViewDidLoad() {
-	// 	console.log('ionViewDidLoad FoyerPage');
-	// }
-    //
-	// createNewFoyer() {
-	// 	let newFoyer = this.alertCtrl.create({
-	// 		title : "Nouveau Foyer",
-	// 		message : "Entrez le nom de votre nouveau foyer",
-	// 		inputs : [
-	// 			{
-	// 				name : "Foyer",
-	// 				placeholder : "Foyer"
-	// 			}
-	// 		],
-	// 		buttons : [
-	// 			{
-	// 				text : "Annuler",
-	// 				handler : data => {
-	// 					console.log("Annuler");
-	// 				}
-	// 			},
-	// 			{
-	// 				text : "Sauvegarder",
-	// 				handler : data => {
-	// 					console.log("Sauvegarder");
-	// 					console.log(data)
-	// 					this.addFoyer(data.Foyer);
-	// 				}
-	// 			}
-	// 		]
-	// 	});
-	// 	newFoyer.present();
-	// }
-    //
-	// ngOnInit() {
-	// 	console.log(this.afAuth.authState);
-	// 	this.foyers = this.db.list('foyers').valueChanges();
-	// }
-    //
-	// addFoyer(value: string): void {
-	// 	const foyerRef = this.db.list('foyers');
-	// 	foyerRef.push({name : value});
-	// }
+	init() {
+        this.loading = this.loadingCtrl.create({ content: 'Récupération des données ...', duration: 10000 });
+        this.loading.present();
+	    this.storage.get('currentUser').then(res => {
+            this.foyerService.list().subscribe(foyers => {
+                this.foyers = foyers.filter(foyer => foyer.createdBy.email === res.email);
+                this.loading.dismiss();
+                this.show   = true;
+            });
+        });
+    }
+
+	createFoyer() {
+	    this.show = false;
+        let foyerModal = this.modalCtrl.create(FoyerModal);
+        foyerModal.onDidDismiss(data => {
+            if (data.valid) {
+                this.init();
+            }
+        });
+        foyerModal.present();
+    }
 }

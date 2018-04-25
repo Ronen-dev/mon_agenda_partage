@@ -4,43 +4,62 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
 import { MeteoPage } from '../pages/meteo/meteo';
 import { LoginPage } from '../pages/login/login';
+import { Storage } from "@ionic/storage";
+import { FoyerPage } from "../pages/foyer/foyer";
+import { AngularFireAuth } from "angularfire2/auth";
 
 @Component({
-  templateUrl: 'app.html'
+    templateUrl: 'app.html'
 })
 export class MyApp {
-  @ViewChild(Nav) nav: Nav;
+    @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = LoginPage;
+    rootPage: any;
 
-  pages: Array<{title: string, component: any}>;
+    pages: Array<{title: string, component: any}>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
-    this.initializeApp();
+    constructor(
+        public platform: Platform,
+        public statusBar: StatusBar,
+        public splashScreen: SplashScreen,
+        private storage: Storage,
+        private afAuth: AngularFireAuth,
+    ) {
+        this.initializeApp();
 
-    this.pages = [
-      { title: 'Home', component: HomePage },
-      { title: 'List', component: ListPage },
-      { title: 'Météo', component: MeteoPage },
-    ];
+        this.pages = [
+            { title: 'Mon calendrier', component: HomePage },
+            { title: 'Foyers', component: FoyerPage },
+            { title: 'Météo', component: MeteoPage },
+        ];
 
-  }
+    }
 
-  initializeApp() {
-    this.platform.ready().then(() => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
-    });
-  }
+    initializeApp() {
+        this.platform.ready().then(() => {
+            // Okay, so the platform is ready and our plugins are available.
+            // Here you can do any higher level native things you might need.
+            this.storage.get('currentUser').then(res => {
+                res ? this.rootPage = HomePage : this.rootPage = LoginPage;
+                this.statusBar.styleDefault();
+                this.splashScreen.hide();
+            });
+        });
+    }
 
-  openPage(page) {
-    // Reset the content nav to have just this page
-    // we wouldn't want the back button to show in this scenario
-    this.nav.setRoot(page.component);
-  }
+    openPage(page) {
+        // Reset the content nav to have just this page
+        // we wouldn't want the back button to show in this scenario
+        this.nav.setRoot(page.component);
+    }
+
+    logout() {
+        this.afAuth.auth.signOut().then(() => {
+            this.storage.remove('currentUser').then(() => {
+                this.nav.setRoot(LoginPage);
+            });
+        });
+    }
 }

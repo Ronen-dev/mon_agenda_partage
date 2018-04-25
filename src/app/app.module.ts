@@ -4,7 +4,6 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
 import { LoginPage } from '../pages/login/login';
 import { MeteoService } from '../services/meteo.service';
 
@@ -20,14 +19,19 @@ import { AngularFireDatabase, AngularFireDatabaseModule } from 'angularfire2/dat
 import { environment } from '../environments/environment';
 import { AngularFireAuth } from "angularfire2/auth";
 import { IonicStorageModule } from "@ionic/storage";
+import { FoyerPage } from "../pages/foyer/foyer";
+import { FoyerService } from "../services/foyer.service";
+import { UserService } from "../services/user.service";
+import { FoyerModal } from "../pages/modals/foyer";
 
 @NgModule({
     declarations: [
         MyApp,
         HomePage,
         LoginPage,
-        ListPage,
-        MeteoPage
+        FoyerPage,
+        MeteoPage,
+        FoyerModal
     ],
     imports: [
         BrowserModule,
@@ -43,14 +47,17 @@ import { IonicStorageModule } from "@ionic/storage";
         MyApp,
         HomePage,
         LoginPage,
-        ListPage,
-        MeteoPage
+        FoyerPage,
+        MeteoPage,
+        FoyerModal
     ],
     providers: [
         StatusBar,
         SplashScreen,
         {provide: ErrorHandler, useClass: IonicErrorHandler},
         MeteoService,
+        FoyerService,
+        UserService,
         Geolocation,
         AngularFireAuth,
         AngularFireDatabase
