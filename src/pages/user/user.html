@@ -16,4 +16,7 @@
     <ion-fab right bottom>
         <button ion-fab color="primary" (click)="addUser()"><ion-icon name="add"></ion-icon></button>
     </ion-fab>
+    <ion-fab *ngIf="showEdit" left bottom>
+        <button ion-fab color="agenda" (click)="editFoyer()"><ion-icon name="settings"></ion-icon></button>
+    </ion-fab>
 </ion-content>

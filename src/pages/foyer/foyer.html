@@ -12,6 +12,9 @@
     <div *ngIf="show && foyers.length > 0">
         <ion-card padding="10px" text-center *ngFor="let foyer of foyers" (click)="detail(foyer)">
             {{ foyer.name }}
+            <span *ngIf="foyer.createdBy.email === currentUser.email" float-right>
+                <ion-icon color="golden" name="ribbon"></ion-icon>
+            </span>
         </ion-card>
     </div>
     <ion-fab right bottom>

@@ -9,7 +9,6 @@ import {
 } from 'ionic-angular';
 import { Foyer } from "../../shared/models/foyer";
 import { FoyerService } from "../../services/foyer.service";
-import { FoyerModal } from "../modals/foyer";
 import { Storage } from "@ionic/storage";
 import { User } from "../../shared/models/user";
 import { UserModal } from "../modals/user";
@@ -21,9 +20,11 @@ import { UserModal } from "../modals/user";
 export class UserPage {
 
     currentFoyer: Foyer;
+    currentUser: User;
 
 	users: User[];
 	show: boolean = false;
+	showEdit: boolean = false;
     loading: Loading;
 
 	constructor(
@@ -48,7 +49,14 @@ export class UserPage {
             let foyer  = foyers.find(foyer => foyer.key === this.currentFoyer.key);
             this.users = foyer.users;
             this.loading.dismiss();
-            this.show   = true;
+            this.show  = true;
+            this.storage.get('currentUser').then(user => {
+                if (user) {
+                    if (user.email === this.currentFoyer.createdBy.email) {
+                        this.showEdit = true;
+                    }
+                }
+            });
         });
     }
 
@@ -60,6 +68,8 @@ export class UserPage {
         });
         userModal.present();
     }
+
+    editFoyer() {}
 
     // detail(user: User) { }
 }
