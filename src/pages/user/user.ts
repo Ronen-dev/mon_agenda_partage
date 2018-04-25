@@ -12,6 +12,7 @@ import { FoyerService } from "../../services/foyer.service";
 import { FoyerModal } from "../modals/foyer";
 import { Storage } from "@ionic/storage";
 import { User } from "../../shared/models/user";
+import { UserModal } from "../modals/user";
 
 @Component({
 	selector: 'page-user',
@@ -51,5 +52,14 @@ export class UserPage {
         });
     }
 
-    detail(user: User) { }
+    addUser() {
+        this.show = false;
+        let userModal = this.modalCtrl.create(UserModal, { foyer: this.currentFoyer });
+        userModal.onDidDismiss(data => {
+            this.init();
+        });
+        userModal.present();
+    }
+
+    // detail(user: User) { }
 }

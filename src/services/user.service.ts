@@ -15,7 +15,9 @@ export class UserService {
     }
 
     list(): Observable<User[]> {
-        return this.db.list('user').valueChanges();
+        return this.fireList().snapshotChanges().map(changes => {
+            return changes.map(c => ({ key: c.payload.key, ...c.payload.val() }));
+        });
     }
 
     // add(user: User, userFireList: AngularFireList<{}>): firebase.database.ThenableReference {

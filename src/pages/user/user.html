@@ -9,8 +9,11 @@
 
 <ion-content padding>
     <div *ngIf="show && users.length > 0">
-        <ion-card padding="10px" text-center *ngFor="let user of users" (click)="detail(user)">
+        <ion-card padding="10px" text-center *ngFor="let user of users">
             {{ user.email }}
         </ion-card>
     </div>
+    <ion-fab right bottom>
+        <button ion-fab color="primary" (click)="addUser()"><ion-icon name="add"></ion-icon></button>
+    </ion-fab>
 </ion-content>

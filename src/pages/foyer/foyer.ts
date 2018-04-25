@@ -57,9 +57,7 @@ export class FoyerPage {
 	    this.show = false;
         let foyerModal = this.modalCtrl.create(FoyerModal);
         foyerModal.onDidDismiss(data => {
-            if (data.valid) {
-                this.init();
-            }
+            this.init();
         });
         foyerModal.present();
     }
