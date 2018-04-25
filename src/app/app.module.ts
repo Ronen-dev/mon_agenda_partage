@@ -25,6 +25,8 @@ import { UserService } from "../services/user.service";
 import { FoyerModal } from "../pages/modals/foyer";
 import { UserPage } from "../pages/user/user";
 import { UserModal } from "../pages/modals/user";
+import { EventModal } from "../pages/modals/event";
+import { EventService } from "../services/event.service";
 
 @NgModule({
     declarations: [
@@ -35,7 +37,8 @@ import { UserModal } from "../pages/modals/user";
         MeteoPage,
         FoyerModal,
         UserPage,
-        UserModal
+        UserModal,
+        EventModal
     ],
     imports: [
         BrowserModule,
@@ -55,7 +58,8 @@ import { UserModal } from "../pages/modals/user";
         MeteoPage,
         FoyerModal,
         UserPage,
-        UserModal
+        UserModal,
+        EventModal
     ],
     providers: [
         StatusBar,
@@ -66,7 +70,8 @@ import { UserModal } from "../pages/modals/user";
         UserService,
         Geolocation,
         AngularFireAuth,
-        AngularFireDatabase
+        AngularFireDatabase,
+        EventService
     ]
 })
 export class AppModule {}

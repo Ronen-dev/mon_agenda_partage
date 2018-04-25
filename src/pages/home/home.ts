@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { ModalController, NavController } from 'ionic-angular';
+import { EventModal } from "../modals/event";
+import { EventService } from "../../services/event.service";
+import { Storage } from "@ionic/storage";
+import { Event } from "../../shared/models/event";
 
 @Component({
     selector: 'page-home',
@@ -7,6 +11,8 @@ import { NavController } from 'ionic-angular';
 })
 export class HomePage {
 
+    show: boolean = false;
+    events: Event[];
     eventSource;
     viewTitle;
     isToday: boolean;
@@ -15,10 +21,34 @@ export class HomePage {
         currentDate: new Date()
     };
 
-    constructor(public navCtrl: NavController) { }
+    constructor(
+        public navCtrl: NavController,
+        public modalCtrl: ModalController,
+        private eventService: EventService,
+        private storage: Storage
+    ) { }
+
+    ionViewDidLoad() {
+        this.init();
+    }
+
+    init() {
+        this.storage.get('currentUser').then(user => {
+            this.eventService.list().subscribe(events => {
+                this.eventSource = events.filter(event => event.user.email === user.email);
+                for (let f of this.eventSource) {
+                    let dateStart = new Date(f.startTime);
+                    let dateEnd = new Date(f.endTime);
+                    f.startTime = new Date(Date.UTC(dateStart.getUTCFullYear(), dateStart.getUTCMonth(), dateStart.getUTCDate(), dateStart.getUTCHours() - 2, dateStart.getUTCMinutes()));
+                    f.endTime = new Date(Date.UTC(dateEnd.getUTCFullYear(), dateEnd.getUTCMonth(), dateEnd.getUTCDate(), dateEnd.getUTCHours() - 2, dateEnd.getUTCMinutes()));
+                }
+                this.show = true;
+            });
+        });
+    }
 
     loadEvents() {
-        this.eventSource = this.createRandomEvents();
+        this.init();
     }
 
     onViewTitleChanged(title) {
@@ -42,48 +72,20 @@ export class HomePage {
             (ev.events !== undefined && ev.events.length !== 0) + ', disabled: ' + ev.disabled);
     }
 
-    onCurrentDateChanged(event:Date) {
+    onCurrentDateChanged(event: Date) {
         let today = new Date();
         today.setHours(0, 0, 0, 0);
         event.setHours(0, 0, 0, 0);
         this.isToday = today.getTime() === event.getTime();
     }
 
-    createRandomEvents() {
-        let events = [];
-        for (let i = 0; i < 50; i += 1) {
-            let date = new Date();
-            let eventType = Math.floor(Math.random() * 2);
-            let startDay = Math.floor(Math.random() * 90) - 45;
-            let endDay = Math.floor(Math.random() * 2) + startDay;
-            let startTime;
-            let endTime;
-            if (eventType === 0) {
-                startTime = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + startDay));
-                if (endDay === startDay) {
-                    endDay += 1;
-                }
-                endTime = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + endDay));
-                events.push({
-                    title: 'All Day - ' + i,
-                    startTime: startTime,
-                    endTime: endTime,
-                    allDay: true
-                });
-            } else {
-                let startMinute = Math.floor(Math.random() * 24 * 60);
-                let endMinute = Math.floor(Math.random() * 180) + startMinute;
-                startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate() + startDay, 0, date.getMinutes() + startMinute);
-                endTime = new Date(date.getFullYear(), date.getMonth(), date.getDate() + endDay, 0, date.getMinutes() + endMinute);
-                events.push({
-                    title: 'Event - ' + i,
-                    startTime: startTime,
-                    endTime: endTime,
-                    allDay: false
-                });
-            }
-        }
-        return events;
+    createEvent() {
+        this.show = false;
+        let eventModal = this.modalCtrl.create(EventModal, { mode: 'add' });
+        eventModal.onDidDismiss(data => {
+            this.init();
+        });
+        eventModal.present();
     }
 
     onRangeChanged(ev) {
