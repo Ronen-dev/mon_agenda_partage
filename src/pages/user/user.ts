@@ -11,15 +11,17 @@ import { Foyer } from "../../shared/models/foyer";
 import { FoyerService } from "../../services/foyer.service";
 import { FoyerModal } from "../modals/foyer";
 import { Storage } from "@ionic/storage";
-import { UserPage } from "../user/user";
+import { User } from "../../shared/models/user";
 
 @Component({
-	selector: 'page-foyer',
-	templateUrl: 'foyer.html'
+	selector: 'page-user',
+	templateUrl: 'user.html'
 })
-export class FoyerPage {
+export class UserPage {
 
-	foyers: Foyer[];
+    currentFoyer: Foyer;
+
+	users: User[];
 	show: boolean = false;
     loading: Loading;
 
@@ -40,27 +42,14 @@ export class FoyerPage {
 	init() {
         this.loading = this.loadingCtrl.create({ content: 'Récupération des données ...', duration: 10000 });
         this.loading.present();
-	    this.storage.get('currentUser').then(res => {
-            this.foyerService.list().subscribe(foyers => {
-                this.foyers = foyers.filter(foyer => foyer.createdBy.email === res.email);
-                this.loading.dismiss();
-                this.show   = true;
-            });
+        this.foyerService.list().subscribe(foyers => {
+            this.currentFoyer = this.navParams.get('foyer');
+            let foyer  = foyers.find(foyer => foyer.key === this.currentFoyer.key);
+            this.users = foyer.users;
+            this.loading.dismiss();
+            this.show   = true;
         });
     }
 
-    detail(foyer: Foyer) {
-	    this.navCtrl.push(UserPage, { foyer: foyer });
-    }
-
-	createFoyer() {
-	    this.show = false;
-        let foyerModal = this.modalCtrl.create(FoyerModal);
-        foyerModal.onDidDismiss(data => {
-            if (data.valid) {
-                this.init();
-            }
-        });
-        foyerModal.present();
-    }
+    detail(user: User) { }
 }

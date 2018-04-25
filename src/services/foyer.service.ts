@@ -16,12 +16,14 @@ export class FoyerService {
     }
 
     list(): Observable<Foyer[]> {
-        return this.db.list('foyer').valueChanges();
+        return this.fireList().snapshotChanges().map(changes => {
+            return changes.map(c => ({ key: c.payload.key, ...c.payload.val() }));
+        });
     }
 
-    listByUser(user: User): Observable<Foyer[]> {
-        return this.db.list('foyer/createdBy',
-            ref => ref.orderByChild('email').equalTo(user.email)
-        ).valueChanges();
-    }
+    // listByUser(user: User): Observable<Foyer[]> {
+    //     return this.db.list('foyer/createdBy',
+    //         ref => ref.orderByChild('email').equalTo(user.email)
+    //     ).valueChanges();
+    // }
 }

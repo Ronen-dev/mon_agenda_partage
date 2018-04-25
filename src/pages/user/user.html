@@ -1,0 +1,16 @@
+<ion-header>
+	<ion-navbar color="agenda">
+		<button ion-button menuToggle>
+			<ion-icon name="menu"></ion-icon>
+		</button>
+		<ion-title>{{ show ? currentFoyer.name : '-'}}</ion-title>
+	</ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <div *ngIf="show && users.length > 0">
+        <ion-card padding="10px" text-center *ngFor="let user of users" (click)="detail(user)">
+            {{ user.email }}
+        </ion-card>
+    </div>
+</ion-content>

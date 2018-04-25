@@ -23,6 +23,7 @@ import { FoyerPage } from "../pages/foyer/foyer";
 import { FoyerService } from "../services/foyer.service";
 import { UserService } from "../services/user.service";
 import { FoyerModal } from "../pages/modals/foyer";
+import { UserPage } from "../pages/user/user";
 
 @NgModule({
     declarations: [
@@ -31,7 +32,8 @@ import { FoyerModal } from "../pages/modals/foyer";
         LoginPage,
         FoyerPage,
         MeteoPage,
-        FoyerModal
+        FoyerModal,
+        UserPage
     ],
     imports: [
         BrowserModule,
@@ -49,7 +51,8 @@ import { FoyerModal } from "../pages/modals/foyer";
         LoginPage,
         FoyerPage,
         MeteoPage,
-        FoyerModal
+        FoyerModal,
+        UserPage
     ],
     providers: [
         StatusBar,
