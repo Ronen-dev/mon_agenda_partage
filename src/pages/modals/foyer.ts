@@ -1,8 +1,9 @@
 import { Component } from "@angular/core";
-import { NavParams, ViewController } from "ionic-angular";
+import { NavController, NavParams, ViewController } from "ionic-angular";
 import { Foyer } from "../../shared/models/foyer";
 import { FoyerService } from "../../services/foyer.service";
 import { Storage } from "@ionic/storage";
+import { FoyerPage } from "../foyer/foyer";
 
 @Component({
     selector: 'page-modal-foyer',
@@ -27,6 +28,9 @@ import { Storage } from "@ionic/storage";
                     <button ion-button type="submit">{{ show && mode === 'add' ? 'Ajouter' : 'Modifier' }}</button>
                 </div>
             </form>
+            <ion-fab right bottom>
+                <button ion-fab color="danger" (click)="remove()"><ion-icon name="trash"></ion-icon></button>
+            </ion-fab>
         </ion-content>
     `
 })
@@ -41,6 +45,7 @@ export class FoyerModal {
         private foyerService: FoyerService,
         private storage: Storage,
         private params: NavParams,
+        private navCtrl: NavController
     ) {
         this.foyer = { } as Foyer;
         this.mode  = params.get('mode');
@@ -73,6 +78,14 @@ export class FoyerModal {
                 this.dismiss(true);
             });
         }
+    }
+
+    remove() {
+        let fireFoyers = this.foyerService.fireList();
+        fireFoyers.remove(this.foyer.key).then(res => {
+            this.dismiss(true);
+            this.navCtrl.setRoot(FoyerPage);
+        });
     }
 
     dismiss(isValid: boolean) {

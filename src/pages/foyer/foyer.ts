@@ -65,7 +65,7 @@ export class FoyerPage {
         foyerModal.present();
     }
 
-    _findUser(users: User[], email: string) {
+    _findUser(users: User[], email: string): boolean {
         for (let i = 0; i < users.length; i++) {
             if (users[i].email === email) {
                 return true;

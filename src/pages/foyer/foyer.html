@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content padding>
-    <span text-center *ngIf="show && foyers.length === 0">Aucun foyer, ajouter votre premier en cliquant sur "+".</span>
+    <ion-title text-center *ngIf="show && foyers.length === 0">Aucun foyer !</ion-title>
     <div *ngIf="show && foyers.length > 0">
         <ion-card padding="10px" text-center *ngFor="let foyer of foyers" (click)="detail(foyer)">
             {{ foyer.name }}

@@ -13,6 +13,9 @@ import { Storage } from "@ionic/storage";
 import { User } from "../../shared/models/user";
 import { UserModal } from "../modals/user";
 import { FoyerModal } from "../modals/foyer";
+import { FoyerPage } from "../foyer/foyer";
+import { UserService } from "../../services/user.service";
+import { CalendarPage } from "../calendar/calendar";
 
 @Component({
 	selector: 'page-user',
@@ -25,7 +28,7 @@ export class UserPage {
 
 	users: User[];
 	show: boolean = false;
-	showEdit: boolean = false;
+	admin: boolean = false;
     loading: Loading;
 
 	constructor(
@@ -35,7 +38,8 @@ export class UserPage {
 		public alertCtrl: AlertController,
         public modalCtrl: ModalController,
         public loadingCtrl: LoadingController,
-        private storage: Storage
+        private storage: Storage,
+        private userService: UserService
     ) { }
 
 	ionViewDidLoad() {
@@ -47,17 +51,22 @@ export class UserPage {
         this.loading.present();
         this.foyerService.list().subscribe(foyers => {
             this.currentFoyer = this.navParams.get('foyer');
-            let foyer  = foyers.find(foyer => foyer.key === this.currentFoyer.key);
-            this.users = foyer.users;
-            this.loading.dismiss();
-            this.show  = true;
-            this.storage.get('currentUser').then(user => {
-                if (user) {
-                    if (user.email === this.currentFoyer.createdBy.email) {
-                        this.showEdit = true;
+            let foyer = foyers.find(foyer => foyer.key === this.currentFoyer.key);
+            if (typeof foyer !== 'undefined') {
+                this.users = foyer.users;
+                this.loading.dismiss();
+                this.show  = true;
+                this.storage.get('currentUser').then(user => {
+                    this.currentUser = user;
+                    if (user) {
+                        if (user.email === this.currentFoyer.createdBy.email) {
+                            this.admin = true;
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                this.loading.dismiss();
+            }
         });
     }
 
@@ -79,5 +88,15 @@ export class UserPage {
         foyerModal.present();
     }
 
-    // detail(user: User) { }
+    leaveFoyer() {
+        let fireFoyers = this.foyerService.fireList();
+        let users = this.currentFoyer.users.filter(user => user.email !== this.currentUser.email);
+        fireFoyers.update(this.currentFoyer.key, { users: users }).then(res => {
+            this.navCtrl.setRoot(FoyerPage);
+        });
+    }
+
+    calendar(user: User) {
+        this.navCtrl.push(CalendarPage, { user: user });
+    }
 }

@@ -9,6 +9,7 @@ import { LoginPage } from '../pages/login/login';
 import { Storage } from "@ionic/storage";
 import { FoyerPage } from "../pages/foyer/foyer";
 import { AngularFireAuth } from "angularfire2/auth";
+import { User } from "../shared/models/user";
 
 @Component({
     templateUrl: 'app.html'
@@ -17,7 +18,8 @@ export class MyApp {
     @ViewChild(Nav) nav: Nav;
 
     rootPage: any;
-
+    currentUser: User;
+    show: boolean = false;
     pages: Array<{title: string, component: any}>;
 
     constructor(
@@ -42,9 +44,11 @@ export class MyApp {
             // Okay, so the platform is ready and our plugins are available.
             // Here you can do any higher level native things you might need.
             this.storage.get('currentUser').then(res => {
+                this.currentUser = res;
                 res ? this.rootPage = HomePage : this.rootPage = LoginPage;
                 this.statusBar.styleDefault();
                 this.splashScreen.hide();
+                this.show = true;
             });
         });
     }

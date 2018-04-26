@@ -14,6 +14,11 @@
         </ion-list>
     </ion-content>
 
+    <ion-footer *ngIf="show">
+        <ion-toolbar text-center>
+            Connecté avec : {{ currentUser.email }}
+        </ion-toolbar>
+    </ion-footer>
 </ion-menu>
 
 <!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->

@@ -1,15 +1,19 @@
 import { Component } from '@angular/core';
-import { ModalController, NavController } from 'ionic-angular';
+import { ModalController, NavController, NavParams } from 'ionic-angular';
 import { EventModal } from "../modals/event";
 import { EventService } from "../../services/event.service";
-import { Storage } from "@ionic/storage";
+import { Storage, Storage } from "@ionic/storage";
+import { Event } from "../../shared/models/event";
+import { User } from "../../shared/models/user";
 
 @Component({
-    selector: 'page-home',
-    templateUrl: 'home.html'
+    selector: 'page-calendar',
+    templateUrl: 'calendar.html'
 })
-export class HomePage {
+export class CalendarPage {
 
+    currentUser: User;
+    user: User;
     show: boolean = false;
     eventSource;
     viewTitle;
@@ -21,8 +25,8 @@ export class HomePage {
 
     constructor(
         public navCtrl: NavController,
-        public modalCtrl: ModalController,
         private eventService: EventService,
+        public navParams: NavParams,
         private storage: Storage
     ) { }
 
@@ -31,9 +35,14 @@ export class HomePage {
     }
 
     init() {
+        this.user = this.navParams.get('user');
         this.storage.get('currentUser').then(user => {
+            this.currentUser = user;
             this.eventService.list().subscribe(events => {
-                this.eventSource = events.filter(event => event.user.email === user.email);
+                this.eventSource = events.filter(event =>
+                    (event.user.email === this.user.email && event.visible)
+                    || (event.user.email === this.currentUser.email && this.user.email === this.currentUser.email)
+                );
                 for (let f of this.eventSource) {
                     let dateStart = new Date(f.startTime);
                     let dateEnd = new Date(f.endTime);
@@ -50,12 +59,7 @@ export class HomePage {
     }
 
     onEventSelected(event) {
-        this.show = false;
-        let eventModal = this.modalCtrl.create(EventModal, { mode: 'edit', event: event });
-        eventModal.onDidDismiss(data => {
-            this.init();
-        });
-        eventModal.present();
+        console.log('Event selected:' + event.startTime + '-' + event.endTime + ',' + event.title);
     }
 
     changeMode(mode) {
@@ -76,15 +80,6 @@ export class HomePage {
         today.setHours(0, 0, 0, 0);
         event.setHours(0, 0, 0, 0);
         this.isToday = today.getTime() === event.getTime();
-    }
-
-    createEvent() {
-        this.show = false;
-        let eventModal = this.modalCtrl.create(EventModal, { mode: 'add' });
-        eventModal.onDidDismiss(data => {
-            this.init();
-        });
-        eventModal.present();
     }
 
     onRangeChanged(ev) {

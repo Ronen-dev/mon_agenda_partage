@@ -11,7 +11,7 @@ import { EventService } from "../../services/event.service";
     template: `
         <ion-header>
             <ion-navbar>
-                <ion-title>Ajouter un événement</ion-title>
+                <ion-title>{{ mode === 'add' ? 'Ajouter' : 'Modifier'}} un événement</ion-title>
                 <ion-buttons end>
                     <button ion-button icon-only (click)="dismiss()">
                         <ion-icon item-right name="ios-close-outline"></ion-icon>
@@ -42,7 +42,7 @@ import { EventService } from "../../services/event.service";
                     <ion-toggle [(ngModel)]="event.visible" name="visible"></ion-toggle>
                 </ion-item>
                 <div text-center margin-top="15px">
-                    <button ion-button type="submit">Ajouter</button>
+                    <button ion-button type="submit">{{ mode === 'add' ? 'Ajouter' : 'Modifier'}}</button>
                 </div>
             </form>
             <pre>{{ event | json }}</pre>
@@ -66,9 +66,17 @@ export class EventModal {
         this.storage.get('currentUser').then(user => {
             delete user.password;
             this.event.user = user;
+            this.mode  = params.get('mode');
+            if (this.mode === 'edit') {
+                this.event = params.get('event');
+                let e = [];
+                this.eventService.list().subscribe(events => {
+                    e = events;
+                    this.event = e.find(event => event.key === this.event.key);
+                    console.log(this.event);
+                });
+            }
         });
-        // this.mode  = params.get('mode');
-        this.init();
     }
 
     init() {
@@ -86,13 +94,17 @@ export class EventModal {
     }
 
     submit() {
-        // this.event.startTime = new Date(this.event.startTime);
-        // this.event.endTime = new Date(this.event.endTime);
-
-        let fireEvent = this.eventService.fireList();
-        fireEvent.push(this.event).then(res => {
-            this.dismiss(true);
-        });
+        if (this.mode === 'add') {
+            let fireEvent = this.eventService.fireList();
+            fireEvent.push(this.event).then(res => {
+                this.dismiss(true);
+            });
+        } else {
+            let fireEvents = this.eventService.fireList();
+            fireEvents.update(this.event.key, this.event).then(res => {
+                this.dismiss(true);
+            });
+        }
     }
 
     dismiss(isValid: boolean) {

@@ -9,14 +9,17 @@
 
 <ion-content padding>
     <div *ngIf="show && users.length > 0">
-        <ion-card padding="10px" text-center *ngFor="let user of users">
+        <ion-card padding="10px" text-center *ngFor="let user of users" (click)="calendar(user)">
             {{ user.email }}
         </ion-card>
     </div>
-    <ion-fab right bottom>
+    <ion-fab *ngIf="!admin" right bottom>
+        <button ion-fab color="agenda" (click)="leaveFoyer()"><ion-icon name="exit"></ion-icon></button>
+    </ion-fab>
+    <ion-fab *ngIf="admin" right bottom>
         <button ion-fab color="primary" (click)="addUser()"><ion-icon name="add"></ion-icon></button>
     </ion-fab>
-    <ion-fab *ngIf="showEdit" left bottom>
+    <ion-fab *ngIf="admin" left bottom>
         <button ion-fab color="agenda" (click)="editFoyer()"><ion-icon name="settings"></ion-icon></button>
     </ion-fab>
 </ion-content>
