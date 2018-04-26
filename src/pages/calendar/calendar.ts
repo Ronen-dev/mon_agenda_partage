@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
-import { ModalController, NavController, NavParams } from 'ionic-angular';
-import { EventModal } from "../modals/event";
+import { NavController, NavParams } from 'ionic-angular';
 import { EventService } from "../../services/event.service";
-import { Storage, Storage } from "@ionic/storage";
-import { Event } from "../../shared/models/event";
+import { Storage } from "@ionic/storage";
 import { User } from "../../shared/models/user";
 
 @Component({

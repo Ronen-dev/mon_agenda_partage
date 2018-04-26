@@ -1,17 +1,16 @@
 import { Component } from "@angular/core";
-import { NavParams, ViewController } from "ionic-angular";
-import { Foyer } from "../../shared/models/foyer";
-import { FoyerService } from "../../services/foyer.service";
+import { NavController, NavParams, ViewController } from "ionic-angular";
 import { Storage } from "@ionic/storage";
 import { Event } from "../../shared/models/event";
 import { EventService } from "../../services/event.service";
+import { FoyerPage } from "../foyer/foyer";
 
 @Component({
     selector: 'page-modal-foyer',
     template: `
         <ion-header>
             <ion-navbar>
-                <ion-title>{{ mode === 'add' ? 'Ajouter' : 'Modifier'}} un événement</ion-title>
+                <ion-title>{{ show && mode === 'add' ? 'Ajouter' : 'Modifier'}} un événement</ion-title>
                 <ion-buttons end>
                     <button ion-button icon-only (click)="dismiss()">
                         <ion-icon item-right name="ios-close-outline"></ion-icon>
@@ -20,7 +19,7 @@ import { EventService } from "../../services/event.service";
             </ion-navbar>
         </ion-header>
         <ion-content>
-            <form (ngSubmit)="submit()">
+            <form *ngIf="show" (ngSubmit)="submit()">
                 <ion-item>
                     <ion-label floating>Titre de l'événement</ion-label>
                     <ion-input type="text" [(ngModel)]="event.title" name="title"></ion-input>
@@ -42,9 +41,12 @@ import { EventService } from "../../services/event.service";
                     <ion-toggle [(ngModel)]="event.visible" name="visible"></ion-toggle>
                 </ion-item>
                 <div text-center margin-top="15px">
-                    <button ion-button type="submit">{{ mode === 'add' ? 'Ajouter' : 'Modifier'}}</button>
+                    <button ion-button type="submit">{{ show && mode === 'add' ? 'Ajouter' : 'Modifier'}}</button>
                 </div>
             </form>
+            <ion-fab *ngIf="show && mode === 'edit'" right bottom>
+                <button ion-fab color="danger" (click)="remove()"><ion-icon name="trash"></ion-icon></button>
+            </ion-fab>
             <pre>{{ event | json }}</pre>
         </ion-content>
     `
@@ -60,37 +62,30 @@ export class EventModal {
         private eventService: EventService,
         private storage: Storage,
         private params: NavParams,
+        private navCtrl: NavController
     ) {
         this.event = { } as Event;
+        this.mode  = params.get('mode');
+        this.init();
+    }
+
+    init() {
         this.event.allDay = false;
         this.storage.get('currentUser').then(user => {
             delete user.password;
             this.event.user = user;
-            this.mode  = params.get('mode');
             if (this.mode === 'edit') {
-                this.event = params.get('event');
+                this.event = this.params.get('event');
                 let e = [];
                 this.eventService.list().subscribe(events => {
                     e = events;
                     this.event = e.find(event => event.key === this.event.key);
-                    console.log(this.event);
+                    this.show = true
                 });
+            } else {
+                this.show = true;
             }
         });
-    }
-
-    init() {
-        // if (this.mode === 'add') {
-        //     this.storage.get('currentUser').then(user => {
-        //         delete user.password;
-        //         this.foyer.createdBy = user;
-        //         this.foyer.users = [user];
-        //         this.show = true;
-        //     });
-        // } else {
-        //     this.foyer = this.params.get('foyer');
-        //     this.show  = true;
-        // }
     }
 
     submit() {
@@ -105,6 +100,14 @@ export class EventModal {
                 this.dismiss(true);
             });
         }
+    }
+
+    remove() {
+        let fireEvents = this.eventService.fireList();
+        fireEvents.remove(this.event.key).then(res => {
+            this.dismiss(true);
+            this.navCtrl.setRoot(FoyerPage);
+        });
     }
 
     dismiss(isValid: boolean) {
