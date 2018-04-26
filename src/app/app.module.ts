@@ -47,7 +47,10 @@ import { CalendarPage } from "../pages/calendar/calendar";
         HttpModule,
         NgCalendarModule,
         IonicModule.forRoot(MyApp),
-        IonicStorageModule.forRoot(),
+        IonicStorageModule.forRoot({
+            name: '__agenda',
+            driverOrder: ['indexeddb', 'sqlite', 'websql']
+        }),
         AngularFireModule.initializeApp(environment.firebase),
         AngularFireDatabaseModule
     ],
