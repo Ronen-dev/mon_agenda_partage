@@ -38,7 +38,7 @@ export class CalendarPage {
             this.currentUser = user;
             this.eventService.list().subscribe(events => {
                 this.eventSource = events.filter(event =>
-                    (event.user.email === this.user.email && event.visible)
+                    ((event.user.email === this.user.email || this._findUser(event.users, this.user.email)) && event.visible)
                     || (event.user.email === this.currentUser.email && this.user.email === this.currentUser.email)
                 );
                 for (let f of this.eventSource) {
@@ -90,4 +90,12 @@ export class CalendarPage {
         return date < current;
     };
 
+    _findUser(users: User[], email: string): boolean {
+        for (let i = 0; i < users.length; i++) {
+            if (users[i].email === email) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

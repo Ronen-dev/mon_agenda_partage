@@ -58,6 +58,9 @@ import { UserEventModal } from "../modals/user-event";
                     </ion-item-options>
                 </ion-item-sliding>
             </ion-list>
+            <ion-fab *ngIf="!admin" right bottom>
+                <button ion-fab color="danger" (click)="leaveEvent()"><ion-icon name="exit"></ion-icon></button>
+            </ion-fab>
             <ion-fab *ngIf="admin" right bottom>
                 <button ion-fab color="primary" (click)="editEvent()"><ion-icon name="settings"></ion-icon></button>
             </ion-fab>
@@ -125,6 +128,15 @@ export class EventPage {
     deleteUser(u: User) {
         let fireEvents = this.eventService.fireList();
         let users = this.currentEvent.users.filter(user => user.email !== u.email);
+        fireEvents.update(this.currentEvent.key, { users: users }).then(() => {
+            this.currentEvent.users = users;
+            this.init();
+        });
+    }
+
+    leaveEvent() {
+        let fireEvents = this.eventService.fireList();
+        let users = this.currentEvent.users.filter(user => user.email !== this.currentUser.email);
         fireEvents.update(this.currentEvent.key, { users: users }).then(() => {
             this.currentEvent.users = users;
             this.init();

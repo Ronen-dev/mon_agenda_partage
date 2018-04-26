@@ -28,7 +28,7 @@ import { FoyerPage } from "../foyer/foyer";
                     <button ion-button type="submit">{{ show && mode === 'add' ? 'Ajouter' : 'Modifier' }}</button>
                 </div>
             </form>
-            <ion-fab right bottom>
+            <ion-fab *ngIf="show && mode === 'edit'" right bottom>
                 <button ion-fab color="danger" (click)="remove()"><ion-icon name="trash"></ion-icon></button>
             </ion-fab>
         </ion-content>
