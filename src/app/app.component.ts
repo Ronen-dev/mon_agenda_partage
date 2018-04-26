@@ -45,10 +45,14 @@ export class MyApp {
             // Here you can do any higher level native things you might need.
             this.storage.get('currentUser').then(res => {
                 this.currentUser = res;
-                res ? this.rootPage = HomePage : this.rootPage = LoginPage;
+                if (this.currentUser) {
+                    this.rootPage = HomePage;
+                    this.show = true;
+                } else {
+                    this.rootPage = LoginPage;
+                }
                 this.statusBar.styleDefault();
                 this.splashScreen.hide();
-                this.show = true;
             });
         });
     }
