@@ -3,7 +3,6 @@ import { ModalController, NavController } from 'ionic-angular';
 import { EventModal } from "../modals/event";
 import { EventService } from "../../services/event.service";
 import { Storage } from "@ionic/storage";
-import { UserPage } from "../user/user";
 import { EventPage } from "../event/event";
 import { User } from "../../shared/models/user";
 

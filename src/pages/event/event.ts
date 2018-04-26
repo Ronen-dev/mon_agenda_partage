@@ -44,7 +44,7 @@ import { UserEventModal } from "../modals/user-event";
                 </ion-item>
             </ion-card>
             <ion-title text-center>Liste des participants</ion-title>
-            <span *ngIf="show && currentEvent.users.length === 0">Aucun participant rattaché à cette événement.</span>
+            <span *ngIf="show && currentEvent.hasOwnProperty('users') && currentEvent.users.length === 0">Aucun participant rattaché à cette événement.</span>
             <ion-list *ngIf="show && currentEvent.users.length > 0">
                 <ion-item-sliding *ngFor="let user of currentEvent.users">
                     <ion-item>
@@ -107,7 +107,9 @@ export class EventPage {
         let eventModal = this.modalCtrl.create(EventModal, { mode: 'edit', event: this.currentEvent });
         eventModal.onDidDismiss(data => {
             if (data.valid) {
-                this.currentEvent = data.event;
+                if (data.hasOwnProperty('event')) {
+                    this.currentEvent = data.event;
+                }
             }
             this.init();
         });

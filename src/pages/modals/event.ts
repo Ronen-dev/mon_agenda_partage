@@ -3,7 +3,7 @@ import { NavController, NavParams, ViewController } from "ionic-angular";
 import { Storage } from "@ionic/storage";
 import { Event } from "../../shared/models/event";
 import { EventService } from "../../services/event.service";
-import { FoyerPage } from "../foyer/foyer";
+import { HomePage } from "../home/home";
 
 @Component({
     selector: 'page-modal-event',
@@ -47,7 +47,6 @@ import { FoyerPage } from "../foyer/foyer";
             <ion-fab *ngIf="show && mode === 'edit'" right bottom>
                 <button ion-fab color="danger" (click)="remove()"><ion-icon name="trash"></ion-icon></button>
             </ion-fab>
-            <pre>{{ event | json }}</pre>
         </ion-content>
     `
 })
@@ -116,10 +115,11 @@ export class EventModal {
     }
 
     remove() {
+        this.show = false;
         let fireEvents = this.eventService.fireList();
         fireEvents.remove(this.event.key).then(res => {
             this.dismiss(true);
-            this.navCtrl.setRoot(FoyerPage);
+            this.navCtrl.setRoot(HomePage);
         });
     }
 
