@@ -6,13 +6,13 @@ import { EventService } from "../../services/event.service";
 import { FoyerPage } from "../foyer/foyer";
 
 @Component({
-    selector: 'page-modal-foyer',
+    selector: 'page-modal-event',
     template: `
         <ion-header>
             <ion-navbar>
                 <ion-title>{{ show && mode === 'add' ? 'Ajouter' : 'Modifier'}} un événement</ion-title>
                 <ion-buttons end>
-                    <button ion-button icon-only (click)="dismiss()">
+                    <button ion-button icon-only (click)="dismiss(false)">
                         <ion-icon item-right name="ios-close-outline"></ion-icon>
                     </button>
                 </ion-buttons>
@@ -83,12 +83,14 @@ export class EventModal {
                     this.show = true
                 });
             } else {
+                this.event.users = [user];
                 this.show = true;
             }
         });
     }
 
     submit() {
+        this.show = false;
         if (this.mode === 'add') {
             let fireEvent = this.eventService.fireList();
             fireEvent.push(this.event).then(res => {
@@ -96,8 +98,19 @@ export class EventModal {
             });
         } else {
             let fireEvents = this.eventService.fireList();
-            fireEvents.update(this.event.key, this.event).then(res => {
-                this.dismiss(true);
+            fireEvents.update(
+                this.event.key,
+                {
+                    allDay: this.event.allDay,
+                    startTime: this.event.startTime,
+                    endTime: this.event.endTime,
+                    visible: this.event.visible,
+                    user: this.event.user,
+                    users: this.event.users,
+                    title: this.event.title
+                }
+            ).then(() => {
+                this.dismiss(true, this.event);
             });
         }
     }
@@ -110,7 +123,11 @@ export class EventModal {
         });
     }
 
-    dismiss(isValid: boolean) {
-        this.viewCtrl.dismiss({ valid: isValid });
+    dismiss(isValid: boolean, event?: Event) {
+        let data = { valid: isValid };
+        if (event) {
+            data['event'] = event;
+        }
+        this.viewCtrl.dismiss(data);
     }
 }

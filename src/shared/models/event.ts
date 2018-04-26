@@ -7,5 +7,6 @@ export interface Event {
     startTime: Date,
     endTime: Date,
     allDay: false,
-    visible: true
+    visible: true,
+    users: User[]
 }

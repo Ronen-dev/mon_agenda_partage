@@ -3,6 +3,9 @@ import { ModalController, NavController } from 'ionic-angular';
 import { EventModal } from "../modals/event";
 import { EventService } from "../../services/event.service";
 import { Storage } from "@ionic/storage";
+import { UserPage } from "../user/user";
+import { EventPage } from "../event/event";
+import { User } from "../../shared/models/user";
 
 @Component({
     selector: 'page-home',
@@ -33,7 +36,7 @@ export class HomePage {
     init() {
         this.storage.get('currentUser').then(user => {
             this.eventService.list().subscribe(events => {
-                this.eventSource = events.filter(event => event.user.email === user.email);
+                this.eventSource = events.filter(event => event.user.email === user.email || this._findUser(event.users, user.email));
                 for (let f of this.eventSource) {
                     let dateStart = new Date(f.startTime);
                     let dateEnd = new Date(f.endTime);
@@ -50,12 +53,7 @@ export class HomePage {
     }
 
     onEventSelected(event) {
-        this.show = false;
-        let eventModal = this.modalCtrl.create(EventModal, { mode: 'edit', event: event });
-        eventModal.onDidDismiss(data => {
-            this.init();
-        });
-        eventModal.present();
+        this.navCtrl.push(EventPage, { event: event });
     }
 
     changeMode(mode) {
@@ -96,5 +94,14 @@ export class HomePage {
         current.setHours(0, 0, 0);
         return date < current;
     };
+
+    _findUser(users: User[], email: string): boolean {
+        for (let i = 0; i < users.length; i++) {
+            if (users[i].email === email) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

@@ -28,6 +28,8 @@ import { UserModal } from "../pages/modals/user";
 import { EventModal } from "../pages/modals/event";
 import { EventService } from "../services/event.service";
 import { CalendarPage } from "../pages/calendar/calendar";
+import { EventPage } from "../pages/event/event";
+import { UserEventModal } from "../pages/modals/user-event";
 
 @NgModule({
     declarations: [
@@ -40,7 +42,9 @@ import { CalendarPage } from "../pages/calendar/calendar";
         UserPage,
         UserModal,
         EventModal,
-        CalendarPage
+        CalendarPage,
+        EventPage,
+        UserEventModal
     ],
     imports: [
         BrowserModule,
@@ -65,7 +69,9 @@ import { CalendarPage } from "../pages/calendar/calendar";
         UserPage,
         UserModal,
         EventModal,
-        CalendarPage
+        CalendarPage,
+        EventPage,
+        UserEventModal
     ],
     providers: [
         StatusBar,
